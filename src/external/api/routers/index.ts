@@ -1,7 +1,6 @@
-
-import {orderRouter} from "./order-router";
 import express from "express";
+import { doctorRouter } from "./doctor-router";
 
 export const routes = express.Router();
 
-routes.use("/order", orderRouter);
+routes.use("/doctor", doctorRouter);
