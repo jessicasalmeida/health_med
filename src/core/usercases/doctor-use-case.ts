@@ -83,7 +83,6 @@ export class DoctorUseCase {
     }
   }
 
-
   async listeners(): Promise<void> {
     this.mq = new RabbitMQ();
     await this.mq.connect();
@@ -92,6 +91,7 @@ export class DoctorUseCase {
       this.mq.publishReply(message.replyTo, await this.findDoctors(), message.correlationId);
     });
     await this.mq.consume('getDoctor', async (message: any) => {
+      await this.mq.connect();
       const id: string = message.message.id;
       console.log("Fila getDoctor. ID: " + id);
       this.mq.publishReply(message.replyTo, await this.findDoctorById(id), message.correlationId);

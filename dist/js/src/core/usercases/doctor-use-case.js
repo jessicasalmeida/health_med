@@ -18,6 +18,7 @@ class DoctorUseCase {
         this.doctorRepository = doctorRepository;
         this.passwordHasher = passwordHasher;
         this.mq = mq;
+        this.listeners();
     }
     createDoctor(doctorData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,7 +32,12 @@ class DoctorUseCase {
     }
     findDoctors() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.doctorRepository.findAll();
+            return yield this.doctorRepository.findAll();
+        });
+    }
+    findDoctorById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.doctorRepository.findByID(id);
         });
     }
     schedule(appointments) {
@@ -77,6 +83,21 @@ class DoctorUseCase {
             catch (ConflictError) {
                 throw new Error("Erro ao publicar mensagem");
             }
+        });
+    }
+    listeners() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.mq = new mq_1.RabbitMQ();
+            yield this.mq.connect();
+            yield this.mq.consume('listDoctors', (message) => __awaiter(this, void 0, void 0, function* () {
+                console.log("Fila listDoctors ");
+                this.mq.publishReply(message.replyTo, yield this.findDoctors(), message.correlationId);
+            }));
+            yield this.mq.consume('getDoctor', (message) => __awaiter(this, void 0, void 0, function* () {
+                const id = message.message.id;
+                console.log("Fila getDoctor. ID: " + id);
+                this.mq.publishReply(message.replyTo, yield this.findDoctorById(id), message.correlationId);
+            }));
         });
     }
 }

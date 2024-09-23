@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DoctorRepository = void 0;
+exports.DoctorRepositoryImp = void 0;
 const db_connect_1 = require("./db-connect");
-class DoctorRepository {
+class DoctorRepositoryImp {
     save(doctor) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -29,14 +29,23 @@ class DoctorRepository {
             }
         });
     }
+    findByID(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            {
+                const query = { id: (id) };
+                const order = yield ((_a = db_connect_1.collections.doctor) === null || _a === void 0 ? void 0 : _a.findOne(query));
+                return order;
+            }
+        });
+    }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             {
-                const doctors = yield ((_a = db_connect_1.collections.doctor) === null || _a === void 0 ? void 0 : _a.find());
-                return doctors;
+                return yield ((_a = db_connect_1.collections.doctor) === null || _a === void 0 ? void 0 : _a.find({}).toArray());
             }
         });
     }
 }
-exports.DoctorRepository = DoctorRepository;
+exports.DoctorRepositoryImp = DoctorRepositoryImp;

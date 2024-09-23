@@ -20,7 +20,7 @@ export class DoctorRepositoryImp implements DoctorRepository {
 
   async findByID(id: string): Promise<Doctor> {
     {
-      const query = { id: (id) };
+      const query = { _id: (id) };
       const order = await collections.doctor?.findOne(query);
       return order as Doctor;
     }
