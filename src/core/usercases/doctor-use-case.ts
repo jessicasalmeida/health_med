@@ -91,7 +91,9 @@ export class DoctorUseCase {
       this.mq.publishReply(message.replyTo, await this.findDoctors(), message.correlationId);
     });
     await this.mq.consume('getDoctor', async (message: any) => {
+      this.mq = new RabbitMQ();
       await this.mq.connect();
+      console.log("get doctor message: " + message)
       const id: string = message.message.id;
       console.log("Fila getDoctor. ID: " + id);
       this.mq.publishReply(message.replyTo, await this.findDoctorById(id), message.correlationId);
