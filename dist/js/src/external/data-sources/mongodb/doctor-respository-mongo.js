@@ -33,7 +33,7 @@ class DoctorRepositoryImp {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             {
-                const query = { id: (id) };
+                const query = { _id: (id) };
                 const order = yield ((_a = db_connect_1.collections.doctor) === null || _a === void 0 ? void 0 : _a.findOne(query));
                 return order;
             }

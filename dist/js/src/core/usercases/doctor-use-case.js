@@ -26,7 +26,7 @@ class DoctorUseCase {
                 throw new validation_error_1.ValidationError('Missing required fields');
             }
             const hashedPassword = yield this.passwordHasher.hash(doctorData.password);
-            const doctor = new doctor_1.Doctor(doctorData._id, doctorData.name, doctorData.cpf, doctorData.crm, doctorData.email, hashedPassword);
+            const doctor = new doctor_1.Doctor(doctorData._id, doctorData.name, doctorData.cpf, doctorData.crm, doctorData.email, hashedPassword, doctorData.idAws);
             return this.doctorRepository.save(doctor);
         });
     }
@@ -94,6 +94,9 @@ class DoctorUseCase {
                 this.mq.publishReply(message.replyTo, yield this.findDoctors(), message.correlationId);
             }));
             yield this.mq.consume('getDoctor', (message) => __awaiter(this, void 0, void 0, function* () {
+                this.mq = new mq_1.RabbitMQ();
+                yield this.mq.connect();
+                console.log("get doctor message: " + message);
                 const id = message.message.id;
                 console.log("Fila getDoctor. ID: " + id);
                 this.mq.publishReply(message.replyTo, yield this.findDoctorById(id), message.correlationId);

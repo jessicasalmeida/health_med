@@ -25,7 +25,8 @@ export class DoctorUseCase {
       doctorData.cpf!,
       doctorData.crm!,
       doctorData.email!,
-      hashedPassword
+      hashedPassword,
+      doctorData.idAws!
     );
     return this.doctorRepository.save(doctor);
   }

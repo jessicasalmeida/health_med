@@ -11,12 +11,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DoctorController = void 0;
 class DoctorController {
-    constructor(doctorUseCase) {
+    constructor(doctorUseCase, cognito) {
         this.doctorUseCase = doctorUseCase;
+        this.cognito = cognito;
     }
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const d = {
+                    _id: req.body.id,
+                    name: req.body.name,
+                    password: req.body.password,
+                    cpf: req.body.cpf,
+                    crm: req.body.crm,
+                    email: req.body.email,
+                    idAws: "000"
+                };
+                const respostaCognito = this.cognito.createUser(d.email);
+                this.cognito.setUserPassword(d.email, d.password);
+                //d.idAws = respostaCognito as string;
                 const doctor = yield this.doctorUseCase.createDoctor(req.body);
                 res.status(201).json(doctor);
             }

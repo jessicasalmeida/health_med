@@ -6,6 +6,7 @@ export class Doctor {
       public cpf: string,
       public crm: string,
       public email: string,
-      public password: string
+      public password: string,
+      public idAws: string
     ) {}
   }
