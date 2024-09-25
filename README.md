@@ -105,6 +105,7 @@ neste momento o pedido esta ativo e o produto não poderá ser excluido
     }
 
 
+
 - getUserById: 
    - Endpoint: /users/:id
    > Exemplo:
