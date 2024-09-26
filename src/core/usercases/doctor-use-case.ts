@@ -40,14 +40,14 @@ export class DoctorUseCase {
   }
 
   async schedule(appointments: Appointment[]): Promise<boolean> {
-
+    const resposta = false;
     try {
       this.mq = new RabbitMQ();
       await this.mq.connect();
-      await this.mq.publish('newAppointments', { appointments: appointments });
+      const resposta = await this.mq.publishExclusive('newAppointments', { appointments: appointments });
       await this.mq.close();
       console.log("Publicado newAppointments");
-      return true;
+      return resposta as unknown as boolean;
     }
     catch (ConflictError) {
       throw new Error("Erro ao publicar mensagem");
