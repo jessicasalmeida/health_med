@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DoctorController = void 0;
+const presenter_1 = require("../presenters/presenter");
 class DoctorController {
     constructor(doctorUseCase, cognito) {
         this.doctorUseCase = doctorUseCase;
@@ -27,11 +28,11 @@ class DoctorController {
                     email: req.body.email,
                     idAws: "000"
                 };
-                const respostaCognito = this.cognito.createUser(d.email);
-                this.cognito.setUserPassword(d.email, d.password);
-                //d.idAws = respostaCognito as string;
+                const respostaCognito = yield this.cognito.createUser(d.email);
+                yield this.cognito.setUserPassword(d.email, d.password);
+                d.idAws = respostaCognito;
                 const doctor = yield this.doctorUseCase.createDoctor(req.body);
-                res.status(201).json(doctor);
+                res.status(201).json(presenter_1.Presenter.toDTO(doctor));
             }
             catch (e) {
                 res.status(400).json({ message: e.message });
@@ -41,8 +42,12 @@ class DoctorController {
     schedule(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.doctorUseCase.schedule(req.body);
-                res.status(200).json("Horários criados com sucesso");
+                const resposta = yield this.doctorUseCase.schedule(req.body);
+                console.log(resposta);
+                if (resposta)
+                    res.status(200).json("Horários criados com sucesso");
+                else
+                    res.status(400).json("Horario ocupado");
             }
             catch (e) {
                 res.status(400).json({ message: e.message });

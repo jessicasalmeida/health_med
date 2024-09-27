@@ -5,11 +5,13 @@ import { DoctorUseCase } from "../../../core/usercases/doctor-use-case";
 import { PasswordHasher } from "../../../operation/controllers/password-hasher-controller";
 import { RabbitMQ } from "../../mq/mq";
 import { Cognito } from "../../cognito/new_user";
+import { Gateway } from "../../../operation/gateway/gateway";
 
 const mq = new RabbitMQ();
 const repository = new DoctorRepositoryImp();
 const passwordHasher = new PasswordHasher();
-const useCase = new DoctorUseCase(repository, passwordHasher, mq);
+const gateway = new Gateway(repository);
+const useCase = new DoctorUseCase(gateway, passwordHasher, mq);
 const cognito = new Cognito();
 const controller = new DoctorController(useCase, cognito);
 

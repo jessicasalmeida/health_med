@@ -76,7 +76,7 @@ class Cognito {
                 }
             }
             catch (error) {
-                console.error('Erro ao criar usuário:', error);
+                console.error('Erro ao criar usuário');
             }
             return "null";
         });
@@ -94,8 +94,8 @@ class Cognito {
                 const response = yield this.cognitoClient.send(command);
                 console.log('Senha fixa definida com sucesso:', response);
             }
-            catch (error) {
-                console.error('Erro ao definir senha fixa:', error);
+            catch (ConflictError) {
+                throw new Error('Erro ao definir senha');
             }
         });
     }

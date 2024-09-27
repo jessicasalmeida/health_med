@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { DoctorUseCase } from '../../core/usercases/doctor-use-case';
 import { Cognito } from '../../external/cognito/new_user';
 import { Doctor } from '../../core/entities/doctor';
+import { Presenter } from '../presenters/presenter';
 
 export class DoctorController {
   constructor(
@@ -25,7 +26,7 @@ export class DoctorController {
       d.idAws = respostaCognito
 
       const doctor = await this.doctorUseCase.createDoctor(req.body);
-      res.status(201).json(doctor);
+      res.status(201).json(Presenter.toDTO(doctor));
     } catch (e) {
       res.status(400).json({ message: (e as Error).message });
     }

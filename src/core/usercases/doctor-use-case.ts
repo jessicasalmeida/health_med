@@ -1,13 +1,13 @@
 import { ValidationError } from '../../common/errors/validation-error';
-import { DoctorRepository } from '../../common/interfaces/doctor-data-source';
 import { RabbitMQ } from '../../external/mq/mq';
 import { PasswordHasher } from '../../operation/controllers/password-hasher-controller';
 import { Doctor } from '../entities/doctor';
 import { Appointment } from '../entities/appointment';
+import { Gateway } from '../../operation/gateway/gateway';
 
 export class DoctorUseCase {
   constructor(
-    private doctorRepository: DoctorRepository,
+    private gateway: Gateway,
     private passwordHasher: PasswordHasher, private mq: RabbitMQ
   ) { 
     this.listeners();
@@ -28,15 +28,15 @@ export class DoctorUseCase {
       hashedPassword,
       doctorData.idAws!
     );
-    return this.doctorRepository.save(doctor);
+    return this.gateway.save(doctor);
   }
 
   async findDoctors(): Promise<Doctor[]> {
-    return await this.doctorRepository.findAll();
+    return await this.gateway.findAll();
   }
 
   async findDoctorById(id: string): Promise<Doctor> {
-    return await this.doctorRepository.findByID(id);
+    return await this.gateway.findById(id);
   }
 
   async schedule(appointments: Appointment[]): Promise<boolean> {

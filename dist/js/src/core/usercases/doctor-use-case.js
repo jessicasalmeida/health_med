@@ -14,8 +14,8 @@ const validation_error_1 = require("../../common/errors/validation-error");
 const mq_1 = require("../../external/mq/mq");
 const doctor_1 = require("../entities/doctor");
 class DoctorUseCase {
-    constructor(doctorRepository, passwordHasher, mq) {
-        this.doctorRepository = doctorRepository;
+    constructor(gateway, passwordHasher, mq) {
+        this.gateway = gateway;
         this.passwordHasher = passwordHasher;
         this.mq = mq;
         this.listeners();
@@ -27,28 +27,29 @@ class DoctorUseCase {
             }
             const hashedPassword = yield this.passwordHasher.hash(doctorData.password);
             const doctor = new doctor_1.Doctor(doctorData._id, doctorData.name, doctorData.cpf, doctorData.crm, doctorData.email, hashedPassword, doctorData.idAws);
-            return this.doctorRepository.save(doctor);
+            return this.gateway.save(doctor);
         });
     }
     findDoctors() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.doctorRepository.findAll();
+            return yield this.gateway.findAll();
         });
     }
     findDoctorById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.doctorRepository.findByID(id);
+            return yield this.gateway.findById(id);
         });
     }
     schedule(appointments) {
         return __awaiter(this, void 0, void 0, function* () {
+            const resposta = false;
             try {
                 this.mq = new mq_1.RabbitMQ();
                 yield this.mq.connect();
-                yield this.mq.publish('newAppointments', { appointments: appointments });
+                const resposta = yield this.mq.publishExclusive('newAppointments', { appointments: appointments });
                 yield this.mq.close();
                 console.log("Publicado newAppointments");
-                return true;
+                return resposta;
             }
             catch (ConflictError) {
                 throw new Error("Erro ao publicar mensagem");
